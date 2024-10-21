@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .week-info {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .odd {
+            color: red;
+        }
+        .even {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="week-info" id="week-status">
+        <!-- The week status will be displayed here -->
+    </div>
+
+    <script>
+        // Define the first day of the first week (October 19, 2023)
+        const firstDayOfFirstWeek = new Date('2023-10-19');
+
+        // Get the current date
+        const currentDate = new Date();
+
+        // Calculate the number of weeks between the first week and the current date
+        function getCurrentWeek() {
+            const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
+            const diffInMs = currentDate - firstDayOfFirstWeek;
+            const weekNumber = Math.floor(diffInMs / oneWeekInMs) + 1; // +1 to make it 1-based index
+            return weekNumber;
+        }
+
+        // Determine if the current week is odd or even
+        function isCurrentWeekOdd() {
+            const currentWeekNumber = getCurrentWeek();
+            return currentWeekNumber % 2 !== 0; // Odd weeks return true
+        }
+
+        // Display whether the current week is odd or even
+        const weekStatusElement = document.getElementById('week-status');
+        if (isCurrentWeekOdd()) {
+            weekStatusElement.textContent = "فرد";
+            weekStatusElement.classList.add('odd');
+        } else {
+            weekStatusElement.textContent = "زوج";
+            weekStatusElement.classList.add('even');
+        }
+    </script>
+</body>
+</html>
