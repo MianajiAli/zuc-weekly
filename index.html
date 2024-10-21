@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Schedule</title>
+    <style>
+        body {
+            font-family: "PeydaWeb";
+            font-size: large;
+            margin: 20px;
+            padding: 20px;
+            background-color: #050506;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #515151;
+            color: #dad6d6;
+            text-align: center;
+        }
+        th {
+            background-color: #03092a4e;
+            color: white;
+        }
+        .week-info {
+            font-size: small;
+            color: #484848;
+        text-decoration-line: line-through;
+        }
+        .highlight {
+            color: rgb(232, 232, 232);
+        text-decoration-line: none;
+
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>Course Schedule</h1>
+    <table id="course-table" dir="rtl">
+        <thead>
+            <tr>
+                <th>نام درس</th>
+                <th>استاد</th>
+                <th>یکشنبه</th>
+                <th>دو شنبه</th>
+                <th>سه شنبه</th>
+                <th>تاریخ امتحان</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Course data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Define start date of the first week (October 19, 2024)
+        const firstDayOfFirstWeek = new Date('2024-10-19');
+
+        // Get the current date
+        const currentDate = new Date();
+
+        // Calculate the number of weeks between the first week and the current date
+        function getCurrentWeek() {
+            const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
+            const diffInMs = currentDate - firstDayOfFirstWeek;
+            const weekNumber = Math.floor(diffInMs / oneWeekInMs) + 1; // +1 to make it 1-based index
+            return weekNumber;
+        }
+
+        // Determine if the current week is odd or even
+        function isCurrentWeekOdd() {
+            const currentWeekNumber = getCurrentWeek();
+            return currentWeekNumber % 2 !== 0; // Odd weeks return true
+        }
+
+        // Helper function to format day sessions with week information
+        function formatDaySessions(daySessions) {
+            const currentWeekIsOdd = isCurrentWeekOdd();
+            if (Array.isArray(daySessions)) {
+                return daySessions.map((session, i) => {
+                    if (i % 2 === 0) { // Time slot
+                        let weekInfo = '';
+                        const weekType = daySessions[i + 1]; // Next index contains the week type (0, 1, 2)
+                        if (weekType === 0) {
+                            weekInfo = '<span class="week-info"></span>';
+                        } else if (weekType === 1) {
+                            // Odd weeks
+                            weekInfo = `<span class="week-info${currentWeekIsOdd ? ' highlight' : ''}">(فرد)</span>`;
+                        } else if (weekType === 2) {
+                            // Even weeks
+                            weekInfo = `<span class="week-info${!currentWeekIsOdd ? ' highlight' : ''}">(زوج)</span>`;
+                        }
+                        return `<div>${session} ${weekInfo}</div>`;
+                    }
+                    return ''; // Skip the week type
+                }).join("");
+            }
+            return daySessions || ""; // Return empty string if no session
+        }
+
+        // Load JSON data
+        const jsonData = [
+            {
+                "Course Name": "اصول حسابداری ",
+                "Instructor": "اساتید گروه آموزشی",
+                "Sunday": ["10:30-12:30 255 اقتصاد", 0],
+                "Monday": ["10:30-12:30 255 اقتصاد", 2],
+                "Tuesday": "",
+                "Exam Date": "1403/11/04 11:00-13:00"
+            },
+            {
+                "Course Name": "ریاضیات برای اقتصاد  ",
+                "Instructor": "رزاقی یاسمن",
+                "Sunday": "",
+                "Monday": ["08:30-10:30 255 اقتصاد", 0],
+                "Tuesday": ["08:30-10:30 255 اقتصاد", 2],
+                "Exam Date": "1403/10/29 11:00-13:00"
+            },
+            {
+                "Course Name": "آمار برای اقتصاد  ",
+                "Instructor": "خادم نوع امید",
+                "Sunday": ["08:30-10:30 255 اقتصاد", 0],
+                "Monday": "",
+                "Tuesday": ["08:30-10:30 255 اقتصاد", 1],
+                "Exam Date": "1403/10/22 11:00-13:00"
+            },
+            {
+                "Course Name": "کلیات علم اقتصاد ",
+                "Instructor": "قلی زاده چنار حیدر",
+                "Sunday": "",
+                "Monday": ["10:30-12:30 255 اقتصاد", 1, "13:30-15:30 255 اقتصاد", 0],
+                "Tuesday": "",
+                "Exam Date": "1403/11/07 11:00-13:00"
+            },
+            {
+                "Course Name": "فارسی",
+                "Instructor": "میر صادقی سید رضی",
+                "Sunday": "",
+                "Monday": "",
+                "Tuesday": ["13:30-15:30 223 انسانی", 0, "15:30-17:30 111 انسانی", 1],
+                "Exam Date": "1403/11/02 11:00-13:00"
+            },
+            {
+                "Course Name": "زبان انگلیسی",
+                "Instructor": "محمدی خواهان علی",
+                "Sunday": ["13:30-15:30 105 انسانی", 0, "15:30-17:30 102 انسانی", 1],
+                "Monday": "",
+                "Tuesday": "",
+                "Exam Date": "1403/11/03 14:00-15:30"
+            }
+        ];
+
+        // Populate the table with data
+        const tableBody = document.getElementById('course-table').getElementsByTagName('tbody')[0];
+
+        jsonData.forEach(course => {
+            const row = tableBody.insertRow();
+            
+            row.insertCell().textContent = course["Course Name"];
+            // Insert course name
+            row.insertCell().textContent = course["Instructor"];
+            row.insertCell().innerHTML = formatDaySessions(course["Sunday"]);
+            row.insertCell().innerHTML = formatDaySessions(course["Monday"]);
+            row.insertCell().innerHTML = formatDaySessions(course["Tuesday"]);
+            
+            // Insert instructor name
+            row.insertCell().textContent = course["Exam Date"];
+            
+            // Insert Sunday sessions
+            
+            // Insert Monday sessions
+            
+            // Insert Tuesday sessions
+            
+            // Insert exam date
+        });
+    </script>
+</body>
+</html>
